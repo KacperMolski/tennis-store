@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "622622828609",
+    "project_id": "tennis-shop-69dc6",
+    "storage_bucket": "tennis-shop-69dc6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622622828609:android:33a6558ff8313da8bebec0",
+        "android_client_info": {
+          "package_name": "com.example.tennis_store"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvDX9FSbq4VJhJx6CYwy4WhH4Q1ZX0tAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622622828609:android:996c9fe9c4dbaaa9bebec0",
+        "android_client_info": {
+          "package_name": "com.tennis.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvDX9FSbq4VJhJx6CYwy4WhH4Q1ZX0tAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
