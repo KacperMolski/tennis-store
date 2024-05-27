@@ -21,7 +21,7 @@ class LoginButton extends StatelessWidget {
       onPressed: onPressed,
       child: Container(
         decoration: BoxDecoration(
-          color: isMain ? AppColorStyles.primary : AppColorStyles.transparent,
+          color: isMain ? AppColorStyles.background : AppColorStyles.transparent,
           borderRadius: BorderRadius.circular(600),
           border: isMain
               ? null

@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:tennis_store/presentation/routing/route_names.dart';
 import 'package:tennis_store/presentation/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:tennis_store/presentation/screens/auth/sign_up/sign_up_screen.dart';
-import 'package:tennis_store/presentation/screens/store/store_screen.dart';
+import 'package:tennis_store/presentation/screens/home/home.dart';
+import 'package:tennis_store/presentation/screens/home/store/store_screen.dart';
 import 'package:tennis_store/presentation/styles/app_color_styles.dart';
 import 'package:tennis_store/presentation/styles/app_text_styles.dart';
 import 'package:tennis_store/presentation/widgets/login_button.dart';
@@ -22,42 +23,39 @@ class InitialScreen extends StatefulWidget {
 
 class _InitialScreenState extends State<InitialScreen> {
   late VideoPlayerController _controller;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final pageController = PageController(initialPage: 0);
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _controller = VideoPlayerController.asset("assets/movie/app_background.mp4")
       ..initialize().then((_) {
-        // Once the video has been loaded we play the video and set looping to true.
         _controller.play();
         _controller.setLooping(true);
-        // Ensure the first frame is shown after the video is initialized.
         setState(() {});
       });
   }
 
   @override
   Widget build(BuildContext context) {
-    bool existing = false;
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     return Scaffold(
       body: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return const StoreScreen();
+              return const Home();
             }
             return SizedBox(
               height: MediaQuery.of(context).size.height,
@@ -124,76 +122,91 @@ class _InitialScreenState extends State<InitialScreen> {
                                       );
                                     },
                                     onNextPressed: () async {
-                                      print('Isnieje? $existing');
-                                      print(
-                                          'email ${emailController.text.trim()} haslo: ${passwordController.text.trim()}');
-                                      await checkIfEmailInUse(
-                                        emailController.text,
+                                      final isExistingUser = await checkIfEmailInUse(
+                                        emailController.text.trim(),
                                         _firestore,
-                                      )
-                                          ? {
-                                              showDialog(
-                                                context: context,
-                                                barrierDismissible: false,
-                                                builder: (context) => Padding(
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 20.0,
-                                                    vertical: 80.0,
-                                                  ),
-                                                  child: Container(
-                                                    decoration: const BoxDecoration(
-                                                      color: AppColorStyles.background,
-                                                      borderRadius: BorderRadius.all(
-                                                        Radius.circular(15),
-                                                      ),
-                                                    ),
-                                                    width: double.infinity,
-                                                    height: double.infinity,
-                                                    child: Center(
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                                        children: [
-                                                          const CircularProgressIndicator(
-                                                            color: AppColorStyles.blackText,
-                                                          ),
-                                                          Space.horizontal(20.0),
-                                                          Text(
-                                                            'You`re logged in...',
-                                                            style: AppTextStyles.circuralProcess(),
-                                                          ),
-                                                          Text(
-                                                            'It might take a few seconds',
-                                                            style: AppTextStyles.miniCircuralProcess(),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              await FirebaseAuth.instance.signInWithEmailAndPassword(
-                                                email: emailController.text.trim(),
-                                                password: passwordController.text.trim(),
-                                              )
-                                            }
-                                          : {
-                                              await _firestore
-                                                  .collection('emails')
-                                                  .doc(emailController.text.trim())
-                                                  .set({
-                                                'email': emailController.text.trim(),
-                                              }),
-                                              await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                                                email: emailController.text.trim(),
-                                                password: passwordController.text.trim(),
-                                              )
-                                            };
-                                      context.pushNamed(
-                                        RouteNames.storeScreen,
                                       );
+
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) => Padding(
+                                          padding: const EdgeInsets.symmetric(),
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              color: AppColorStyles.background,
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(25),
+                                              ),
+                                            ),
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            child: Center(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Image.asset('assets/loading.gif'),
+                                                  Space.horizontal(20.0),
+                                                  Text(
+                                                    isExistingUser
+                                                        ? 'You`re logged in...'
+                                                        : 'You`ve created an account...',
+                                                    style: AppTextStyles.circuralProcess(),
+                                                  ),
+                                                  Text(
+                                                    'It might take a few seconds',
+                                                    style: AppTextStyles.miniCircuralProcess(),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+
+                                      if (isExistingUser) {
+                                        await FirebaseAuth.instance.signInWithEmailAndPassword(
+                                          email: emailController.text.trim(),
+                                          password: passwordController.text.trim(),
+                                        );
+                                      } else {
+                                        await _firestore.collection('emails').doc(emailController.text.trim()).set({
+                                          'email': emailController.text.trim(),
+                                        });
+                                        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                                          email: emailController.text.trim(),
+                                          password: passwordController.text.trim(),
+                                        );
+                                      }
+
+                                      Navigator.of(context).pop(); // Close the dialog
+                                      context.pushNamed(RouteNames.home);
                                     },
                                   ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    color: AppColorStyles.background,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Image.asset('assets/loading.gif'),
+                                          Space.horizontal(20.0),
+                                          Text(
+                                            'You`re logged in...',
+                                            style: AppTextStyles.circuralProcess(),
+                                          ),
+                                          Text(
+                                            'It might take a few seconds',
+                                            style: AppTextStyles.miniCircuralProcess(),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -230,7 +243,7 @@ class _InitialScreenState extends State<InitialScreen> {
               measure: _controller.value.size,
               isMain: true,
               text: 'Join Us',
-              onPressed: () {
+              onPressed: () async {
                 pageController.animateToPage(
                   1,
                   duration: const Duration(seconds: 1),
@@ -244,9 +257,7 @@ class _InitialScreenState extends State<InitialScreen> {
               isMain: false,
               text: 'Store',
               onPressed: () {
-                context.goNamed(
-                  RouteNames.storeScreen,
-                );
+                context.goNamed(RouteNames.home);
               },
             ),
           ],
@@ -260,22 +271,53 @@ class _InitialScreenState extends State<InitialScreen> {
     FirebaseFirestore firebaseFirestore,
   ) async {
     try {
-      // Fetch sign-in methods for the email address
-      final querySnapshot = await firebaseFirestore.collection('emails').get();
-      final emails = querySnapshot.docs.map((doc) => doc['email'] as String).toList();
-      // In case list is not empty
-      if (emails.isNotEmpty) {
-        // Return true because there is an existing
-        // user using the email address
-        return true;
-      } else {
-        // Return false because email adress is not in use
-        return false;
-      }
+      final querySnapshot = await firebaseFirestore.collection('emails').where('email', isEqualTo: emailAddress).get();
+
+      return querySnapshot.docs.isNotEmpty;
     } catch (error) {
-      // Handle error
-      // ...
-      return true;
+      return false;
     }
   }
+
+  final List<Map<String, dynamic>> products = [
+    {
+      "product_name": "Nike Court Dri-FIT Tennis Skirt",
+      "image_name": "nike_court_dri_fit_skirt.jpg",
+      "price": "59.99",
+      "manufacturer": "Nike"
+    },
+    {
+      "product_name": "Nike Flex Ace Tennis Shorts",
+      "image_name": "nike_flex_ace_shorts.jpg",
+      "price": "49.99",
+      "manufacturer": "Nike"
+    },
+    {
+      "product_name": "Wilson Pro Staff 97 Tennis Racket",
+      "image_name": "wilson_pro_staff_97.jpg",
+      "price": "249.99",
+      "manufacturer": "Wilson"
+    },
+    {
+      "product_name": "Wilson Roland Garros Team Bag",
+      "image_name": "wilson_roland_garros_bag.jpg",
+      "price": "89.99",
+      "manufacturer": "Wilson"
+    },
+    {
+      "product_name": "Wilson Ultra 100 Tennis Racket With balls",
+      "image_name": "wilson_ultra_100.jpg",
+      "price": "269.99",
+      "manufacturer": "Wilson"
+    }
+  ];
+
+  // Future<void> loadProductsToFirestore() async {
+  //   final firestore = FirebaseFirestore.instance;
+  //   final collection = firestore.collection('products');
+
+  //   for (var product in products) {
+  //     await collection.add(product);
+  //   }
+  // }
 }

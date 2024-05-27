@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:tennis_store/presentation/routing/route_names.dart';
 import 'package:tennis_store/presentation/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:tennis_store/presentation/screens/auth/sign_up/sign_up_screen.dart';
+import 'package:tennis_store/presentation/screens/home/basket/basket.dart';
+import 'package:tennis_store/presentation/screens/home/home.dart';
 import 'package:tennis_store/presentation/screens/initial_screen/initial_screen.dart';
-import 'package:tennis_store/presentation/screens/store/store_screen.dart';
+import 'package:tennis_store/presentation/screens/home/store/store_screen.dart';
 
 class RouteConfig {
   static GoRouter returnRouter() {
@@ -53,6 +55,24 @@ class RouteConfig {
           pageBuilder: (context, state) {
             return const MaterialPage(
               child: StoreScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/basketScreen',
+          name: RouteNames.basketScreen,
+          pageBuilder: (context, state) {
+            return const MaterialPage(
+              child: Basket(),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/home',
+          name: RouteNames.home,
+          pageBuilder: (context, state) {
+            return const MaterialPage(
+              child: Home(),
             );
           },
         ),

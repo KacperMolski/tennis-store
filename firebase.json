@@ -1,1 +1,55 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"tennis-shop-69dc6","appId":"1:622622828609:android:33a6558ff8313da8bebec0","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"tennis-shop-69dc6","configurations":{"android":"1:622622828609:android:33a6558ff8313da8bebec0","ios":"1:622622828609:ios:6845810034db7d7ebebec0","macos":"1:622622828609:ios:6845810034db7d7ebebec0","web":"1:622622828609:web:9f99358f6f00f75dbebec0","windows":"1:622622828609:web:1833ee9ed96cb8a7bebec0"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "tennis-shop-69dc6",
+          "appId": "1:622622828609:android:33a6558ff8313da8bebec0",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "tennis-shop-69dc6",
+          "configurations": {
+            "android": "1:622622828609:android:33a6558ff8313da8bebec0",
+            "ios": "1:622622828609:ios:6845810034db7d7ebebec0",
+            "macos": "1:622622828609:ios:6845810034db7d7ebebec0",
+            "web": "1:622622828609:web:9f99358f6f00f75dbebec0",
+            "windows": "1:622622828609:web:1833ee9ed96cb8a7bebec0"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    },
+    {
+      "source": "mail",
+      "codebase": "mail",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

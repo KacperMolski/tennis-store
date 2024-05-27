@@ -81,4 +81,22 @@ class AppTextStyles {
       color: AppColorStyles.blackText,
     );
   }
+
+  static TextStyle normaltext() {
+    return TextStyle(
+      color: AppColorStyles.blackText,
+      fontFamily: GoogleFonts.quicksand().fontFamily,
+      fontSize: 24.0,
+      fontWeight: FontWeight.w900,
+    );
+  }
+
+  static TextStyle greenText() {
+    return TextStyle(
+      color: AppColorStyles.primary,
+      fontFamily: GoogleFonts.aBeeZee().fontFamily,
+      fontSize: 26.0,
+      fontWeight: FontWeight.bold,
+    );
+  }
 }
